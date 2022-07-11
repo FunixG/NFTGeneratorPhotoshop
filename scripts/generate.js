@@ -1,5 +1,7 @@
 #include "./libs/JSON.js";
 
+var date = new Date();
+
 var charList = {
     type: "@",
     rarity: "#"
@@ -115,7 +117,7 @@ function main() {
         resetLayers(groups);
     }
 
-    alert("Generation process is complete.");
+    alert("Generation process is complete.\nThanks for using this generator <3.\nGo check my content if you want to give some support: Twitter @FunixGaming");
 }
 
 function isPartIsTypeValid(types, typesValid) {
@@ -134,7 +136,7 @@ function isPartIsTypeValid(types, typesValid) {
 }
 
 function getRarityWeights(string) {
-    var weight = Number(string.split("#").pop());
+    var weight = Number(string.split(charList.rarity).pop());
 
     if (isNaN(weight)) {
         weight = 1;
@@ -142,23 +144,30 @@ function getRarityWeights(string) {
     return weight;
 }
 
+//TODO need fix parsing
 function cleanName(string) {
-    var skipping = false;
+    var words = string.split(/\s+/);
     var name = "";
 
-    for (var i = 0; i < string.length; ++i) {
-        if (string[i] === charList.type || string[i] === charList.rarity) {
-            skipping = true;
-        } else if (string[i] === " ") {
-            skipping = false;
-            name += " ";
-        } else {
-            if (!skipping) {
-                name += string[i];
+    for (var wordIterator = 0; wordIterator < words.length; ++wordIterator) {
+        var skipping = false;
+
+        for (var i = 0; i < words[wordIterator][i].length; ++i) {
+            var c = words[wordIterator][i];
+
+            if (c === charList.type || c === charList.rarity) {
+                skipping = true;
+            } else {
+                if (!skipping) {
+                    name += c;
+                }
             }
         }
-    }
 
+        if (wordIterator + 1 < words.length) {
+            name += " ";
+        }
+    }
     return name;
 }
 
@@ -199,7 +208,7 @@ function getTypes(string) {
 }
 
 function saveImage(edition) {
-    var saveFile = new File(toFolder("build/images") + "/" + edition + ".png");
+    var saveFile = new File(toFolder(getBuildFolderName() + "/images") + "/" + edition + ".png");
     var exportOptions = new ExportOptionsSaveForWeb();
 
     exportOptions.format = SaveDocumentType.PNG;
@@ -216,14 +225,13 @@ function saveImage(edition) {
 
 //TODO get type in meta
 function saveMetadata(data) {
-    var file = new File(toFolder("build/metadata") + "/" + data.edition + ".json");
+    var file = new File(toFolder(getBuildFolderName() + "/metadata") + "/" + data.edition + ".json");
 
     file.open("w");
     file.write(JSON.stringify(data));
     file.close();
 }
 
-//TODO create build folder with date inside
 function toFolder(name) {
     var path = app.activeDocument.path;
     var folder = new Folder(path + "/" + name);
@@ -232,6 +240,10 @@ function toFolder(name) {
         folder.create();
     }
     return folder;
+}
+
+function getBuildFolderName() {
+    return "build_" + date.getDay() + "-" + date.getMonth() + "-" + date.getFullYear() + "_" + date.getHours() + "h" + date.getMinutes() + "m" + date.getSeconds() + "s";
 }
 
 main();
