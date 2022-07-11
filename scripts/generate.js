@@ -2,7 +2,6 @@
 
 function main() {
     var continueConfirmation = confirm("You are going to use the NFT generator created by Funix. Are you sure you want to continue ?");
-
     if (!continueConfirmation) {
         return;
     }
@@ -10,6 +9,9 @@ function main() {
     var supply = parseInt(prompt("How many images do you want to generate ?", "10"));
     var name = prompt("What is the name of your collection ?", "NFT-Collection");
     var description = prompt("What is the description for your collection ?", "");
+
+    var maleGen = confirm("Do you want male textures in the generation ?");
+    var femaleGen = confirm("Do you want female textures in the generation ?")
 
     alert(supply + " images will be generated, so sit back relax and enjoy the art being generated.");
 
@@ -23,7 +25,7 @@ function main() {
         nft.name = name + " #" + nftID + 1;
         nft.description = description;
         nft.image = "To be replaced";
-        nft.edition = nftID;
+        nft.edition = nftID + 1;
         nft.attributes = [];
 
         for (var groupIterator = 0; groupIterator < groups.length; ++groupIterator) {
