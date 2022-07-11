@@ -1,5 +1,10 @@
 #include "./libs/JSON.js";
 
+var charList = {
+    type: "@",
+    rarity: "#"
+}
+
 function main() {
     var continueConfirmation = confirm("You are going to use the NFT generator created by Funix. Are you sure you want to continue ?");
     if (!continueConfirmation) {
@@ -10,14 +15,15 @@ function main() {
     var name = prompt("What is the name of your collection ?", "NFT-Collection");
     var description = prompt("What is the description for your collection ?", "");
 
-    var maleGen = confirm("Do you want male textures in the generation ?");
-    var femaleGen = confirm("Do you want female textures in the generation ?")
-
-    alert(supply + " images will be generated, so sit back relax and enjoy the art being generated.");
-
     var groups = app.activeDocument.layerSets;
+    if (groups.length === 0) {
+        alert("You have no groups. Please create folders to have parts.")
+        return;
+    }
 
     resetLayers(groups);
+
+    alert(supply + " images will be generated, so sit back relax and enjoy the art being generated.");
 
     for (var nftID = 0; nftID < supply; ++nftID) {
         var nft = {};
@@ -28,41 +34,80 @@ function main() {
         nft.edition = nftID + 1;
         nft.attributes = [];
 
-        for (var groupIterator = 0; groupIterator < groups.length; ++groupIterator) {
+        var userTypesConfig = false;
+        var typesValid = [];
+
+        if (groups[0].name.toLowerCase() === "types") {
+            var typesGroup = groups[0];
+            var weightTypes = 0;
+            var typesMap = [];
+            userTypesConfig = true;
+
+            for (var i = 0; i < typesGroup.layers.length; ++i) {
+                var typeLayer = typesGroup.layers[i];
+                var typeWeight = getRarityWeights(typeLayer.name);
+
+                weightTypes += typeWeight;
+                typesMap.push({
+                    index: i,
+                    types: getTypes(typeLayer.name),
+                    weight: typeWeight
+                });
+            }
+
+            var random = Math.floor(Math.random() * weightTypes);
+
+            for (var z = 0; z < typesMap.length; ++z) {
+                var typeMapSelected = typesMap[z];
+
+                random -= typeMapSelected.weight;
+                if (random <= 0) {
+                    typesValid = typeMapSelected.types;
+                    break;
+                }
+            }
+        }
+
+        for (var groupIterator = (userTypesConfig ? 1 : 0); groupIterator < groups.length; ++groupIterator) {
             var group = groups[groupIterator];
             var totalWeight = 0;
             var layerMap = [];
 
             for (var layerIterator = 0; layerIterator < group.layers.length; ++layerIterator) {
                 var layer = group.layers[layerIterator];
+                var rarityWeight = getRarityWeights(layer.name);
 
-                totalWeight += getRWeights(layer.name);
+                totalWeight += rarityWeight;
                 layerMap.push({
                     index: layerIterator,
                     name: cleanName(layer.name),
-                    weight: getRWeights(layer.name)
+                    weight: rarityWeight,
+                    types: getTypes(layer.name)
                 });
             }
 
             var ran = Math.floor(Math.random() * totalWeight);
 
-            (function() {
-                for (var j = 0; j < group.layers.length; ++j) {
-                    var layer = group.layers[j];
+            for (var j = 0; j < group.layers.length; ++j) {
+                var layerGet = group.layers[j];
+                var layerMapSelected = layerMap[j];
 
-                    ran -= layerMap[j].weight;
+                ran -= layerMapSelected.weight;
 
-                    if (ran < 0) {
-                        layer.visible = true;
+                if (ran <= 0 && isPartIsTypeValid(layerMapSelected.types, typesValid)) {
+                    layerGet.visible = true;
 
-                        nft.attributes.push({
-                            trait_type: group.name,
-                            value: layerMap[j].name
-                        })
-                        return;
+                    if (typesValid.length === 0) {
+                        typesValid = layerMapSelected.types;
                     }
+
+                    nft.attributes.push({
+                        trait_type: group.name,
+                        value: layerMapSelected.name
+                    })
+                    break;
                 }
-            })()
+            }
         }
 
         saveImage(nft.edition);
@@ -73,7 +118,22 @@ function main() {
     alert("Generation process is complete.");
 }
 
-function getRWeights(string) {
+function isPartIsTypeValid(types, typesValid) {
+    if (typesValid.length === 0) {
+        return true;
+    } else {
+        for (var i = 0; i < types.length; ++i) {
+            for (var k = 0; k < typesValid.length; ++k) {
+                if (typesValid[k].toLowerCase() === types[i].toLowerCase()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+}
+
+function getRarityWeights(string) {
     var weight = Number(string.split("#").pop());
 
     if (isNaN(weight)) {
@@ -83,17 +143,59 @@ function getRWeights(string) {
 }
 
 function cleanName(string) {
-    return string.split("#").shift();
+    var skipping = false;
+    var name = "";
+
+    for (var i = 0; i < string.length; ++i) {
+        if (string[i] === charList.type || string[i] === charList.rarity) {
+            skipping = true;
+        } else if (string[i] === " ") {
+            skipping = false;
+            name += " ";
+        } else {
+            if (!skipping) {
+                name += string[i];
+            }
+        }
+    }
+
+    return name;
 }
 
 function resetLayers(groups) {
-    for (var i = 0; i < groups.length; i++) {
-        groups[i].visible = true;
+    for (var i = 0; i < groups.length; ++i) {
+        var group = groups[i];
 
-        for (var j = 0; j < groups[i].layers.length; j++) {
-            groups[i].layers[j].visible = false;
+        group.visible = true;
+        for (var j = 0; j < group.layers.length; ++j) {
+            group.layers[j].visible = false;
         }
     }
+}
+
+function getTypes(string) {
+    var words = string.split(/\s+/);
+    var types = [];
+
+    for (var i = 0; i < words.length; ++i) {
+        var parsingType = false;
+        var word = words[i];
+        var type = "";
+
+        for (var k = 0; k < word.length; ++k) {
+            if (word[k] === charList.type) {
+                parsingType = true;
+
+                if (type.length > 0) {
+                    types.push(type);
+                    type = "";
+                }
+            } else if (parsingType) {
+                type += word[k];
+            }
+        }
+    }
+    return types;
 }
 
 function saveImage(edition) {
@@ -112,6 +214,7 @@ function saveImage(edition) {
     );
 }
 
+//TODO get type in meta
 function saveMetadata(data) {
     var file = new File(toFolder("build/metadata") + "/" + data.edition + ".json");
 
@@ -120,6 +223,7 @@ function saveMetadata(data) {
     file.close();
 }
 
+//TODO create build folder with date inside
 function toFolder(name) {
     var path = app.activeDocument.path;
     var folder = new Folder(path + "/" + name);
