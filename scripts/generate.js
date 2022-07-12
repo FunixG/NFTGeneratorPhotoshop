@@ -160,12 +160,12 @@ function getRarityWeights(string) {
     }
 }
 
-//TODO need fix parsing
 function cleanName(string) {
     var words = string.split(/\s+/);
-    var name = "";
+    var names = [];
 
     for (var wordIterator = 0; wordIterator < words.length; ++wordIterator) {
+        var name = "";
         var skipping = false;
 
         for (var i = 0; i < words[wordIterator].length; ++i) {
@@ -180,11 +180,12 @@ function cleanName(string) {
             }
         }
 
-        if (wordIterator + 1 < words.length) {
-            name += " ";
+        if (name.length > 0) {
+            names.push(name);
         }
     }
-    return name;
+
+    return names.join(" ");
 }
 
 function resetLayers(groups) {
