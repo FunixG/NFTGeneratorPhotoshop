@@ -63,7 +63,7 @@ function main() {
                 var typeMapSelected = typesMap[z];
 
                 random -= typeMapSelected.weight;
-                if (random <= 0) {
+                if (random < 0) {
                     typesValid = typeMapSelected.types;
                     break;
                 }
@@ -96,7 +96,7 @@ function main() {
 
                 ran -= layerMapSelected.weight;
 
-                if (ran <= 0 && isPartIsTypeValid(layerMapSelected.types, typesValid)) {
+                if (ran < 0 && isPartIsTypeValid(layerMapSelected.types, typesValid)) {
                     layerGet.visible = true;
 
                     if (typesValid.length === 0) {
@@ -117,7 +117,7 @@ function main() {
         resetLayers(groups);
     }
 
-    alert("Generation process is complete.\nThanks for using this generator <3.\nGo check my content if you want to give some support: Twitter @FunixGaming");
+    alert("Generation process is complete.\nThanks for using this generator <3.\n\nGo check my content if you want to give some support: Twitter @FunixGaming");
 }
 
 function isPartIsTypeValid(types, typesValid) {
@@ -136,12 +136,28 @@ function isPartIsTypeValid(types, typesValid) {
 }
 
 function getRarityWeights(string) {
-    var weight = Number(string.split(charList.rarity).pop());
+    var parsing = false;
+    var data = "";
+
+    for (var i = 0; i < string.length; ++i) {
+        if (string[i] === charList.rarity) {
+            parsing = true;
+        } else if ((string[i] > '9' || string[i] < '0') && parsing) {
+            break;
+        } else {
+            if (parsing) {
+                data += string[i];
+            }
+        }
+    }
+
+    var weight = Number(data);
 
     if (isNaN(weight)) {
-        weight = 1;
+        return 1;
+    } else {
+        return weight;
     }
-    return weight;
 }
 
 //TODO need fix parsing
@@ -152,7 +168,7 @@ function cleanName(string) {
     for (var wordIterator = 0; wordIterator < words.length; ++wordIterator) {
         var skipping = false;
 
-        for (var i = 0; i < words[wordIterator][i].length; ++i) {
+        for (var i = 0; i < words[wordIterator].length; ++i) {
             var c = words[wordIterator][i];
 
             if (c === charList.type || c === charList.rarity) {
@@ -193,15 +209,24 @@ function getTypes(string) {
 
         for (var k = 0; k < word.length; ++k) {
             if (word[k] === charList.type) {
-                parsingType = true;
-
-                if (type.length > 0) {
-                    types.push(type);
-                    type = "";
+                if (parsingType) {
+                    if (type.length > 0) {
+                        types.push(type);
+                        type = "";
+                    }
+                } else {
+                    parsingType = true;
                 }
-            } else if (parsingType) {
-                type += word[k];
+            } else {
+                if (parsingType) {
+                    type += word[k];
+                }
             }
+        }
+
+        if (type.length > 0) {
+            types.push(type);
+            type = "";
         }
     }
     return types;
