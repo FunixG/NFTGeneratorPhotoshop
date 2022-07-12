@@ -260,6 +260,7 @@ function saveImage(edition) {
 function saveMetadata(data) {
     var file = new File(toFolder(getBuildFolderName() + "/metadata") + "/" + data.edition + ".json");
 
+    file.encoding = "UTF8";
     file.open("w");
     file.write(JSON.stringify(data));
     file.close();
