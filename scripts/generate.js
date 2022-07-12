@@ -160,7 +160,7 @@ function getRarityWeights(string) {
 
     var weight = Number(data);
 
-    if (isNaN(weight)) {
+    if (isNaN(weight) || data.length === 0) {
         return 1;
     } else {
         return weight;
