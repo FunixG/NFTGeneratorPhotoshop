@@ -18,7 +18,7 @@ function main() {
     var name = prompt("What is the name of your collection ?", "NFT-Collection");
     var description = prompt("What is the description for your collection ?", "");
 
-    var rarityUserCheck = confirm("This script use a rarity system. You can add # on your layers to define a rarity. Do you want to cancel the script and edit your layers ?\nPlease see the documentation on github.")
+    var rarityUserCheck = confirm("This script use a rarity system. You can add # on your layers names to define a rarity. Do you want to cancel the script and edit your layers ?\nPlease see the documentation on github.")
     if (!rarityUserCheck) {
         return;
     }
