@@ -17,15 +17,17 @@ function main() {
     var name = prompt("What is the name of your collection ?", "NFT-Collection");
     var description = prompt("What is the description for your collection ?", "");
 
+    var confirmExecution = confirm(supply + " images will be generated. Do you want proceed ? It's a long execution and you will need to wait.");
+    if (!confirmExecution) {
+        return;
+    }
+
     var groups = app.activeDocument.layerSets;
     if (groups.length === 0) {
         alert("You have no groups. Please create folders to have parts.")
         return;
     }
-
     resetLayers(groups);
-
-    alert(supply + " images will be generated, so sit back relax and enjoy the art being generated.");
 
     for (var nftID = 0; nftID < supply; ++nftID) {
         var nft = {};
@@ -117,7 +119,12 @@ function main() {
         resetLayers(groups);
     }
 
-    alert("Generation process is complete.\nThanks for using this generator <3.\n\nGo check my content if you want to give some support: Twitter @FunixGaming");
+    alert(
+        "Generation process is complete.\n" +
+        "Build folder: " + getBuildFolderName() + "\n" +
+        "Thanks for using this generator <3.\n\n" +
+        "If you want to support me: Twitter @FunixGaming"
+    );
 }
 
 function isPartIsTypeValid(types, typesValid) {
