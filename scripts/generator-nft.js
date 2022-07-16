@@ -31,6 +31,8 @@ function main() {
         typesInMeta = confirm("Do you want to have types in the metadata ?");
     }
 
+    var lowBitsExport = confirm("Do you want that the NFT will be exported in format PNG-8 instead of PNG-24 ?\nSay yes for PNG-8 (256 colors max)\nSay no for PNG-24 (~16 millions colors)");
+
     var confirmExecution = confirm(supply + " images will be generated. Do you want proceed ? It's a long execution and you will need to wait. (Photoshop will be frozen during the run)");
     if (!confirmExecution) {
         return;
@@ -113,7 +115,7 @@ function main() {
             nft.genre = typeData.name;
         }
 
-        saveImage(nft.edition);
+        saveImage(nft.edition, lowBitsExport);
         saveMetadata(nft);
         resetLayers(groups);
     }

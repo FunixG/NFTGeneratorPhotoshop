@@ -98,12 +98,13 @@ function getTypes(string) {
     return types;
 }
 
-function saveImage(edition) {
+function saveImage(edition, lowBitsExport) {
     var saveFile = new File(toFolder(getBuildFolderName() + "/images") + "/" + edition + ".png");
     var exportOptions = new ExportOptionsSaveForWeb();
 
     exportOptions.format = SaveDocumentType.PNG;
-    exportOptions.PNG24 = false;
+    exportOptions.PNG8 = lowBitsExport;
+    exportOptions.quality = 100;
     exportOptions.transparency = true;
     exportOptions.interlaced = false;
 
