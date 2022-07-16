@@ -1,8 +1,11 @@
-function getTypesOfUserConfig() {
+function getTypesOfUserConfig(folderName) {
     var groups = app.activeDocument.layerSets;
-    var typesValid = [];
+    var typeData = {
+        name: "toSet",
+        typesValid: []
+    }
 
-    if (groups[0].name.toLowerCase() === "types") {
+    if (groups[0].name.toLowerCase() === folderName.toLowerCase()) {
         var typesGroup = groups[0];
         var weightTypes = 0;
         var typesMap = [];
@@ -14,6 +17,7 @@ function getTypesOfUserConfig() {
             weightTypes += typeWeight;
             typesMap.push({
                 index: i,
+                name: cleanName(typeLayer.name),
                 types: getTypes(typeLayer.name),
                 weight: typeWeight
             });
@@ -26,10 +30,11 @@ function getTypesOfUserConfig() {
 
             random -= typeMapSelected.weight;
             if (random < 0) {
-                typesValid = typeMapSelected.types;
+                typeData.name = typeMapSelected.name;
+                typeData.typesValid = typeMapSelected.types;
                 break;
             }
         }
     }
-    return typesValid;
+    return typeData;
 }
