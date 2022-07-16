@@ -114,7 +114,6 @@ function saveImage(edition) {
     );
 }
 
-//TODO get type in meta
 function saveMetadata(data) {
     var file = new File(toFolder(getBuildFolderName() + "/metadata") + "/" + data.edition + ".json");
 
@@ -135,5 +134,5 @@ function toFolder(name) {
 }
 
 function getBuildFolderName() {
-    return "build_" + date.getDay() + "-" + date.getMonth() + "-" + date.getFullYear() + "_" + date.getHours() + "h" + date.getMinutes() + "m" + date.getSeconds() + "s";
+    return "build_" + date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear() + "_" + date.getHours() + "h" + date.getMinutes() + "m" + date.getSeconds() + "s";
 }

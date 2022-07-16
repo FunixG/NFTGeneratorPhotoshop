@@ -18,9 +18,17 @@ function main() {
     var name = prompt("What is the name of your collection ?", "NFT-Collection");
     var description = prompt("What is the description for your collection ?", "");
 
-    var rarityUserCheck = confirm("This script use a rarity system. You can add # on your layers names to define a rarity. Do you want to cancel the script and edit your layers ?\nPlease see the documentation on github.")
+    var rarityUserCheck = confirm("This script use a rarity system. You can add # on your layers names to define a rarity. Do you want to continue ?\nPlease see the documentation on github.")
     if (!rarityUserCheck) {
         return;
+    }
+
+    var usingTypes = confirm("Are you using genres or types for your collection ? You can create differents types for the generation.\nCheck the documentation on github.");
+    var typesFolderName = "types";
+    var typesInMeta = false;
+    if (usingTypes) {
+        typesFolderName = prompt("What's the name of the folder containing the types ?", "types");
+        typesInMeta = confirm("Do you want to have types in the metadata ?");
     }
 
     var confirmExecution = confirm(supply + " images will be generated. Do you want proceed ? It's a long execution and you will need to wait. (Photoshop will be frozen during the run)");
@@ -43,12 +51,21 @@ function main() {
         nft.description = description;
         nft.image = "To be replaced";
         nft.edition = nftID + 1;
+        if (usingTypes) {
+            nft.genre = "toSet";
+        }
         nft.attributes = [];
 
-        var typesValid = [];
-        typesValid = getTypesOfUserConfig();
+        var typeData = {
+            name: "toSet",
+            typesValid: []
+        }
 
-        for (var groupIterator = (typesValid.length > 0 ? 1 : 0); groupIterator < groups.length; ++groupIterator) {
+        if (usingTypes) {
+            typeData = getTypesOfUserConfig(typesFolderName);
+        }
+
+        for (var groupIterator = (usingTypes ? 1 : 0); groupIterator < groups.length; ++groupIterator) {
             var group = groups[groupIterator];
             var totalWeight = 0;
             var layerMap = [];
@@ -60,26 +77,27 @@ function main() {
                 totalWeight += rarityWeight;
                 layerMap.push({
                     index: layerIterator,
-                    name: cleanName(layer.name),
                     weight: rarityWeight,
+                    name: cleanName(layer.name),
                     types: getTypes(layer.name)
                 });
             }
 
             var ran = Math.floor(Math.random() * totalWeight);
 
-            for (var j = 0; j < group.layers.length; ++j) {
+            var size = group.layers.length + (group.layers.length / 2);
+            for (var j = 0; j < size; ++j) {
                 var layerRandomiser = Math.floor(Math.random() * group.layers.length);
                 var layerGet = group.layers[layerRandomiser];
                 var layerMapSelected = layerMap[layerRandomiser];
 
                 ran -= layerMapSelected.weight;
 
-                if (ran < 0 && isPartIsTypeValid(layerMapSelected.types, typesValid)) {
+                if (ran < 0 && isPartIsTypeValid(layerMapSelected.types, typeData.typesValid, usingTypes)) {
                     layerGet.visible = true;
 
-                    if (typesValid.length === 0) {
-                        typesValid = layerMapSelected.types;
+                    if (typeData.typesValid.length === 0) {
+                        typeData.typesValid = layerMapSelected.types;
                     }
 
                     nft.attributes.push({
@@ -89,6 +107,10 @@ function main() {
                     break;
                 }
             }
+        }
+
+        if (usingTypes) {
+            nft.genre = typeData.name;
         }
 
         saveImage(nft.edition);
@@ -104,8 +126,8 @@ function main() {
     );
 }
 
-function isPartIsTypeValid(types, typesValid) {
-    if (typesValid.length === 0) {
+function isPartIsTypeValid(types, typesValid, usingTypes) {
+    if (!usingTypes || typesValid.length === 0) {
         return true;
     } else {
         for (var i = 0; i < types.length; ++i) {
