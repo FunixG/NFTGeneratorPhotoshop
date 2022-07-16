@@ -51,7 +51,7 @@ function main() {
         nft.description = description;
         nft.image = "To be replaced";
         nft.edition = nftID + 1;
-        if (usingTypes) {
+        if (usingTypes && typesInMeta) {
             nft.genre = "toSet";
         }
         nft.attributes = [];
@@ -109,7 +109,7 @@ function main() {
             }
         }
 
-        if (usingTypes) {
+        if (usingTypes && typesInMeta) {
             nft.genre = typeData.name;
         }
 
