@@ -87,8 +87,8 @@ function main() {
 
             var ran = Math.floor(Math.random() * totalWeight);
 
-            var size = group.layers.length + (group.layers.length / 2);
-            for (var j = 0; j < size; ++j) {
+            var found = false;
+            for (var j = 0; found === false; ++j) {
                 var layerRandomiser = Math.floor(Math.random() * group.layers.length);
                 var layerGet = group.layers[layerRandomiser];
                 var layerMapSelected = layerMap[layerRandomiser];
@@ -106,6 +106,7 @@ function main() {
                         trait_type: group.name,
                         value: layerMapSelected.name
                     })
+                    found = true;
                     break;
                 }
             }
