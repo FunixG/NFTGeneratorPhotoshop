@@ -78,7 +78,7 @@ function main() {
         if (usingTypes) {
             typeData = getTypesOfUserConfig(typesFolderName);
             if (typeData === null) {
-                alert("The folder " + typesFolderName + " does not exists on your projet for the type definition.");
+                alert("The folder " + typesFolderName + " does not exists on your projet for the types definition.");
                 return;
             }
         }
@@ -89,6 +89,8 @@ function main() {
             var layerMap = [];
 
             if (usingTypes && group.name.toLowerCase() === typesFolderName) {
+                continue;
+            } else if (usingTypes && !groupUsable(group, typeData.typesValid)) {
                 continue;
             }
 
@@ -148,7 +150,7 @@ function main() {
         resetLayers(groups);
     }
 
-    writeResumeFile(supply);
+    writeResumeFile(supply, name, description, usingTypes, typesInMeta, lowBitsExport);
 
     alert(
         "Generation process is complete.\n" +
@@ -157,21 +159,6 @@ function main() {
         "If you want to support me: Twitter @FunixGaming\n" +
         "E-Mail: contact@funixgaming.fr"
     );
-}
-
-function isPartIsTypeValid(types, typesValid, usingTypes) {
-    if (!usingTypes || typesValid.length === 0) {
-        return true;
-    } else {
-        for (var i = 0; i < types.length; ++i) {
-            for (var k = 0; k < typesValid.length; ++k) {
-                if (typesValid[k].toLowerCase() === types[i].toLowerCase()) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
 }
 
 main();
