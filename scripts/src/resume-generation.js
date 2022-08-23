@@ -45,7 +45,7 @@ function addCategoryAndTrait(category, trait) {
     }
 }
 
-function writeResumeFile(nftAmount) {
+function writeResumeFile(nftAmount, collecName, collecDescription, usingTypes, typesMetadataVisible, isPng8) {
     var endDate = new Date();
     var buildFolder = getBuildFolderName();
     var resumeFile = new File(toFolder(buildFolder) + "/resume-generation.txt");
@@ -55,6 +55,12 @@ function writeResumeFile(nftAmount) {
         "* Twitter: @FunixGaming\n" +
         "* E-Mail: contact@funixgaming.fr\n" +
         "* \n" +
+        "* NFT amount: " + nftAmount + "\n" +
+        "* NFT collection name: " + collecName + "\n" +
+        "* NFT collection description: " + collecDescription + "\n" +
+        "* Using types system: " + usingTypes + "\n" +
+        "* Types visible in the metadata: " + typesMetadataVisible + "\n" +
+        "* PNG-8 export: " + isPng8 + "\n" +
         "* Generated started at " + date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + "\n" +
         "* Generated ended at " + endDate.getDate() + "/" + (endDate.getMonth() + 1) + "/" + endDate.getFullYear() + " " + endDate.getHours() + ":" + endDate.getMinutes() + ":" + endDate.getSeconds() + "\n" +
         "**/\n\n";
