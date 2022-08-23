@@ -18,7 +18,7 @@ function main() {
     }
 
     var supply = parseInt(prompt("How many images do you want to generate ?", "10"));
-    var name = prompt("What is the name of your collection ?", "NFT-Collection");
+    var name = "";
     var description = prompt("What is the description for your collection ?", "");
 
     var rarityUserCheck = confirm("This script use a rarity (weight) system. You can add # on your layers names to define a rarity. Do you want to continue ?\nPlease see the documentation on github.")
@@ -29,11 +29,11 @@ function main() {
     var usingTypes = confirm("Are you using genres or types for your collection ? You can create differents types for the generation.\nCheck the documentation on github.");
     var typesFolderName = "types";
     var typesInMeta = false;
-    var wantTypeFileNamesGeneration = false;
     if (usingTypes) {
         typesFolderName = prompt("What's the name of the folder in photoshop containing the types ?", "types").toLowerCase();
         typesInMeta = confirm("Do you want to have types in the metadata ?");
-        wantTypeFileNamesGeneration = confirm("Do you want to have the type name in the name of the nft file generated ?\n\nFor example if no : 1.png\nIf yes : 1-MALE.png");
+    } else {
+        name = prompt("What is the name of your collection ?", "NFT-Collection");
     }
 
     var lowBitsExport = confirm("Do you want that the NFT will be exported in format PNG-8 instead of PNG-24 ?\nSay yes for PNG-8 (256 colors max)\nSay no for PNG-24 (~16 millions colors)");
@@ -61,10 +61,10 @@ function main() {
     for (var nftID = 0; nftID < supply; ++nftID) {
         var nft = {};
 
-        nft.name = name + " #" + nftID + 1;
+        nft.name = "toSet";
         nft.description = description;
         nft.image = "To be replaced";
-        nft.edition = nftID + 1;
+        nft.edition = (nftID + 1).toString();
         if (usingTypes && typesInMeta) {
             nft.genre = "toSet";
         }
@@ -145,8 +145,10 @@ function main() {
             nft.genre = typeData.name;
         }
 
-        if (wantTypeFileNamesGeneration) {
-            nft.edition = nft.edition + "-" + typeData.name;
+        if (usingTypes) {
+            nft.name = typeData.name + " #" + nft.edition;
+        } else {
+            nft.name = name + " #" + nft.edition;
         }
 
         saveImage(nft.edition, lowBitsExport);
