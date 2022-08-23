@@ -2,6 +2,7 @@
 
 #include "./src/utils.js";
 #include "./src/algorithm.js";
+#include "./src/resume-generation.js";
 
 var charList = {
     type: "@",
@@ -30,7 +31,7 @@ function main() {
     if (usingTypes) {
         typesFolderName = prompt("What's the name of the folder in photoshop containing the types ?", "types").toLowerCase();
         typesInMeta = confirm("Do you want to have types in the metadata ?");
-        wantTypeFileNamesGeneration = confirm("Do you want to have the type name in the name of the nft file generated ?\n\nFor example if no : 1.png\nIf yes : MALE 1.png");
+        wantTypeFileNamesGeneration = confirm("Do you want to have the type name in the name of the nft file generated ?\n\nFor example if no : 1.png\nIf yes : 1-MALE.png");
     }
 
     var lowBitsExport = confirm("Do you want that the NFT will be exported in format PNG-8 instead of PNG-24 ?\nSay yes for PNG-8 (256 colors max)\nSay no for PNG-24 (~16 millions colors)");
