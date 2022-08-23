@@ -26,9 +26,11 @@ function main() {
     var usingTypes = confirm("Are you using genres or types for your collection ? You can create differents types for the generation.\nCheck the documentation on github.");
     var typesFolderName = "types";
     var typesInMeta = false;
+    var wantTypeFileNamesGeneration = false;
     if (usingTypes) {
-        typesFolderName = prompt("What's the name of the folder containing the types ?", "types");
+        typesFolderName = prompt("What's the name of the folder in photoshop containing the types ?", "types");
         typesInMeta = confirm("Do you want to have types in the metadata ?");
+        wantTypeFileNamesGeneration = confirm("Do you want to have the type name in the name of the nft file generated ?\n\nFor example if no : 1.png\nIf yes : MALE 1.png");
     }
 
     var lowBitsExport = confirm("Do you want that the NFT will be exported in format PNG-8 instead of PNG-24 ?\nSay yes for PNG-8 (256 colors max)\nSay no for PNG-24 (~16 millions colors)");
@@ -40,7 +42,7 @@ function main() {
 
     var groups = app.activeDocument.layerSets;
     if (groups.length === 0) {
-        alert("You have no groups. Please create folders to have parts. Please check the documentation on github.");
+        alert("You do not have any groups. Please create folders to have parts. Please check the documentation on github.");
         return;
     }
 
@@ -114,6 +116,10 @@ function main() {
 
         if (usingTypes && typesInMeta) {
             nft.genre = typeData.name;
+        }
+
+        if (wantTypeFileNamesGeneration) {
+            nft.edition = nft.edition + "-" + typeData.name;
         }
 
         saveImage(nft.edition, lowBitsExport);
