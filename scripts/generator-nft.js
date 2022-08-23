@@ -2,6 +2,7 @@
 
 #include "./src/utils.js";
 #include "./src/algorithm.js";
+#include "./src/resume-generation.js";
 
 var charList = {
     type: "@",
@@ -18,7 +19,7 @@ function main() {
     var name = prompt("What is the name of your collection ?", "NFT-Collection");
     var description = prompt("What is the description for your collection ?", "");
 
-    var rarityUserCheck = confirm("This script use a rarity system. You can add # on your layers names to define a rarity. Do you want to continue ?\nPlease see the documentation on github.")
+    var rarityUserCheck = confirm("This script use a rarity (weight) system. You can add # on your layers names to define a rarity. Do you want to continue ?\nPlease see the documentation on github.")
     if (!rarityUserCheck) {
         return;
     }
@@ -27,7 +28,7 @@ function main() {
     var typesFolderName = "types";
     var typesInMeta = false;
     if (usingTypes) {
-        typesFolderName = prompt("What's the name of the folder containing the types ?", "types");
+        typesFolderName = prompt("What's the name of the folder containing the types ?", "types").toLowerCase();
         typesInMeta = confirm("Do you want to have types in the metadata ?");
     }
 
@@ -44,8 +45,15 @@ function main() {
         return;
     }
 
+    //Make sure that the project is set up properly, no layers visible
     resetLayers(groups);
 
+    initResume(usingTypes, typesFolderName);
+
+    /*
+    Main program loop
+    Used to generate the NFT collection
+    */
     for (var nftID = 0; nftID < supply; ++nftID) {
         var nft = {};
 
@@ -58,27 +66,37 @@ function main() {
         }
         nft.attributes = [];
 
+        //Object to know the type definition, used when the NFT artist want to define genres for the collection, example: Male, Female, Robot, Etc...
         var typeData = {
             name: "toSet",
             typesValid: []
         }
 
+        //This part of code is used to get the infos about the type
         if (usingTypes) {
             typeData = getTypesOfUserConfig(typesFolderName);
+            if (typeData === null) {
+                alert("The folder " + typesFolderName + " does not exists on your projet for the type definition.");
+                return;
+            }
         }
 
-        for (var groupIterator = (usingTypes ? 1 : 0); groupIterator < groups.length; ++groupIterator) {
+        for (var groupIterator = 0; groupIterator < groups.length; ++groupIterator) {
             var group = groups[groupIterator];
             var totalWeight = 0;
             var layerMap = [];
 
+            if (usingTypes && group.name.toLowerCase() === typesFolderName) {
+                continue;
+            }
+
+            //For loop used to collect all the layers and total weight
             for (var layerIterator = 0; layerIterator < group.layers.length; ++layerIterator) {
                 var layer = group.layers[layerIterator];
                 var rarityWeight = getRarityWeights(layer.name);
 
                 totalWeight += rarityWeight;
                 layerMap.push({
-                    index: layerIterator,
                     weight: rarityWeight,
                     name: cleanName(layer.name),
                     types: getTypes(layer.name)
@@ -86,8 +104,8 @@ function main() {
             }
 
             var ran = Math.floor(Math.random() * totalWeight);
-
             var found = false;
+
             for (var j = 0; found === false; ++j) {
                 var layerRandomiser = Math.floor(Math.random() * group.layers.length);
                 var layerGet = group.layers[layerRandomiser];
@@ -105,7 +123,10 @@ function main() {
                     nft.attributes.push({
                         trait_type: group.name,
                         value: layerMapSelected.name
-                    })
+                    });
+
+                    addCategoryAndTrait(group.name, layerMapSelected.name);
+
                     found = true;
                     break;
                 }
@@ -121,11 +142,14 @@ function main() {
         resetLayers(groups);
     }
 
+    writeResumeFile();
+
     alert(
         "Generation process is complete.\n" +
         "Build folder: " + getBuildFolderName() + "\n" +
         "Thanks for using this generator <3.\n\n" +
-        "If you want to support me: Twitter @FunixGaming"
+        "If you want to support me: Twitter @FunixGaming\n" +
+        "E-Mail: contact@funixgaming.fr"
     );
 }
 
