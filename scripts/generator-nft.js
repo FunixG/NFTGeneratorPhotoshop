@@ -9,7 +9,7 @@ var charList = {
     type: "@",
     rarity: "#"
 }
-var layerIngoreMetadtaName = "NONE";
+var layerIngoreMetadtaName = "none";
 
 function main() {
     var continueConfirmation = confirm("You are going to use the NFT generator created by Funix. Are you sure you want to continue ?");
@@ -126,7 +126,7 @@ function main() {
                         typeData.typesValid = layerMapSelected.types;
                     }
 
-                    if (!stringContains(layerMapSelected.name, layerIngoreMetadtaName)) {
+                    if (!stringContains(layerMapSelected.name.toLowerCase(), layerIngoreMetadtaName)) {
                         nft.attributes.push({
                             trait_type: group.name,
                             value: layerMapSelected.name
