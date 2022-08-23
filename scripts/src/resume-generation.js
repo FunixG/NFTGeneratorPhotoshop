@@ -45,7 +45,8 @@ function addCategoryAndTrait(category, trait) {
     }
 }
 
-function writeResumeFile() {
+function writeResumeFile(nftAmount) {
+    var endDate = new Date();
     var buildFolder = getBuildFolderName();
     var resumeFile = new File(toFolder(buildFolder) + "/resume-generation.txt");
     var data = "/**\n" +
@@ -54,7 +55,8 @@ function writeResumeFile() {
         "* Twitter: @FunixGaming\n" +
         "* E-Mail: contact@funixgaming.fr\n" +
         "* \n" +
-        "* Generated at " + date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + "\n" +
+        "* Generated started at " + date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + "\n" +
+        "* Generated ended at " + endDate.getDate() + "/" + (endDate.getMonth() + 1) + "/" + endDate.getFullYear() + " " + endDate.getHours() + ":" + endDate.getMinutes() + ":" + endDate.getSeconds() + "\n" +
         "**/\n\n";
 
     for (var i = 0; i < resumeList.length; ++i) {
@@ -64,7 +66,7 @@ function writeResumeFile() {
         for (var k = 0; k < resume.traits.length; ++k) {
             var trait = resume.traits[k];
 
-            data += trait.trait + " (" + trait.timesSeen + " times used)\n"
+            data += trait.trait + " (" + getPourcentage(nftAmount, trait.timesSeen) + "%, " + trait.timesSeen + " times used)\n"
         }
         data += "\n";
     }
@@ -73,4 +75,8 @@ function writeResumeFile() {
     resumeFile.open("w");
     resumeFile.write(data);
     resumeFile.close();
+}
+
+function getPourcentage(maxItems, nbrItems) {
+    return (100 * (nbrItems / maxItems)).toString();
 }

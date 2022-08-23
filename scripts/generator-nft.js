@@ -142,7 +142,7 @@ function main() {
         resetLayers(groups);
     }
 
-    writeResumeFile();
+    writeResumeFile(supply);
 
     alert(
         "Generation process is complete.\n" +
