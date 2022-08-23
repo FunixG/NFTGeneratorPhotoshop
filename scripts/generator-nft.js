@@ -1,4 +1,5 @@
 #include "./libs/JSON.js";
+#include "./libs/Strings.js";
 
 #include "./src/utils.js";
 #include "./src/algorithm.js";
@@ -8,6 +9,7 @@ var charList = {
     type: "@",
     rarity: "#"
 }
+var layerIngoreMetadtaName = "NONE";
 
 function main() {
     var continueConfirmation = confirm("You are going to use the NFT generator created by Funix. Are you sure you want to continue ?");
@@ -124,10 +126,12 @@ function main() {
                         typeData.typesValid = layerMapSelected.types;
                     }
 
-                    nft.attributes.push({
-                        trait_type: group.name,
-                        value: layerMapSelected.name
-                    });
+                    if (!stringContains(layerMapSelected.name, layerIngoreMetadtaName)) {
+                        nft.attributes.push({
+                            trait_type: group.name,
+                            value: layerMapSelected.name
+                        });
+                    }
 
                     addCategoryAndTrait(group.name, layerMapSelected.name);
 
