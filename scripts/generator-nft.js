@@ -65,9 +65,6 @@ function main() {
         nft.description = description;
         nft.image = "To be replaced";
         nft.edition = (nftID + 1).toString();
-        if (usingTypes && typesInMeta) {
-            nft.genre = "toSet";
-        }
         nft.attributes = [];
 
         //Object to know the type definition, used when the NFT artist want to define genres for the collection, example: Male, Female, Robot, Etc...
@@ -142,7 +139,10 @@ function main() {
         }
 
         if (usingTypes && typesInMeta) {
-            nft.genre = typeData.name;
+            nft.attributes.push({
+                trait_type: typesFolderName,
+                value: typeData.name
+            });
         }
 
         if (usingTypes) {
