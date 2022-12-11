@@ -82,6 +82,13 @@ function main() {
             }
         }
 
+        if (usingTypes && typesInMeta) {
+            nft.attributes.push({
+                trait_type: typesFolderName,
+                value: typeData.name
+            });
+        }
+
         for (var groupIterator = 0; groupIterator < groups.length; ++groupIterator) {
             var group = groups[groupIterator];
             var totalWeight = 0;
@@ -136,13 +143,6 @@ function main() {
                     break;
                 }
             }
-        }
-
-        if (usingTypes && typesInMeta) {
-            nft.attributes.push({
-                trait_type: typesFolderName,
-                value: typeData.name
-            });
         }
 
         if (usingTypes) {
