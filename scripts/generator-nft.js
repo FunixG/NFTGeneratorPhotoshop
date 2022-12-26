@@ -19,7 +19,7 @@ function main() {
 
     var supply = parseInt(prompt("How many images do you want to generate ?", "10"));
     var name = prompt("What is the name of your collection ?", "NFT-Collection");
-    var description = prompt("What is the description for your collection ?", "");
+    var description = prompt("What is the description for your collection ?", "NFT-Description");
 
     var rarityUserCheck = confirm("This script use a rarity (weight) system. You can add # on your layers names to define a rarity. Do you want to continue ?\nPlease see the documentation on github.")
     if (!rarityUserCheck) {
@@ -144,6 +144,7 @@ function main() {
         }
 
         if (usingTypes) {
+            addTypeInResume(typeData.name);
             nft.name = typeData.name + " #" + nft.edition;
         } else {
             nft.name = name + " #" + nft.edition;
