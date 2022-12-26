@@ -1,4 +1,5 @@
 var resumeList = []
+var typesList = []
 
 function initResume(usingTypes, typesFolderName) {
     var groups = app.activeDocument.layerSets;
@@ -7,7 +8,16 @@ function initResume(usingTypes, typesFolderName) {
         var group = groups[groupIterator];
 
         if (usingTypes && group.name.toLowerCase() === typesFolderName) {
-            continue;
+            for (var typesIterator = 0; typesIterator < group.layers.length; ++typesIterator) {
+                var layerType = group.layers[typesIterator];
+
+                var type = {
+                    name: cleanName(layerType.name),
+                    timesSeen: 0
+                }
+                typesList.push(type);
+            }
+
         } else {
             var resume = {
                 category: group.name,
@@ -45,6 +55,17 @@ function addCategoryAndTrait(category, trait) {
     }
 }
 
+function addTypeInResume(type) {
+    for (var i = 0; i < typesList.length; ++i) {
+        var typeSelect = typesList[i];
+
+        if (typeSelect.name === type) {
+            ++typesList[i].timesSeen;
+            return;
+        }
+    }
+}
+
 function writeResumeFile(nftAmount, collecName, collecDescription, usingTypes, typesMetadataVisible, isPng8) {
     var endDate = new Date();
     var buildFolder = getBuildFolderName();
@@ -64,6 +85,16 @@ function writeResumeFile(nftAmount, collecName, collecDescription, usingTypes, t
         "* Generated started at " + date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + "\n" +
         "* Generated ended at " + endDate.getDate() + "/" + (endDate.getMonth() + 1) + "/" + endDate.getFullYear() + " " + endDate.getHours() + ":" + endDate.getMinutes() + ":" + endDate.getSeconds() + "\n" +
         "**/\n\n";
+
+    if (usingTypes) {
+        data += "- Types used:\n";
+        for (var typesIterator = 0; typesIterator < typesList.length; ++ typesIterator) {
+            var typeSelec = typesList[typesIterator];
+
+            data += typeSelec.name + " (" + getPourcentage(nftAmount, typeSelec.timesSeen) + "%, " + typeSelec.timesSeen + " times used)\n";
+        }
+        data += "\n";
+    }
 
     for (var i = 0; i < resumeList.length; ++i) {
         var resume = resumeList[i];
