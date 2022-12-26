@@ -18,7 +18,7 @@ function main() {
     }
 
     var supply = parseInt(prompt("How many images do you want to generate ?", "10"));
-    var name = "";
+    var name = prompt("What is the name of your collection ?", "NFT-Collection");
     var description = prompt("What is the description for your collection ?", "");
 
     var rarityUserCheck = confirm("This script use a rarity (weight) system. You can add # on your layers names to define a rarity. Do you want to continue ?\nPlease see the documentation on github.")
@@ -32,8 +32,6 @@ function main() {
     if (usingTypes) {
         typesFolderName = prompt("What's the name of the folder in photoshop containing the types ?", "types").toLowerCase();
         typesInMeta = confirm("Do you want to have types in the metadata ?");
-    } else {
-        name = prompt("What is the name of your collection ?", "NFT-Collection");
     }
 
     var lowBitsExport = confirm("Do you want that the NFT will be exported in format PNG-8 instead of PNG-24 ?\nSay yes for PNG-8 (256 colors max)\nSay no for PNG-24 (~16 millions colors)");
