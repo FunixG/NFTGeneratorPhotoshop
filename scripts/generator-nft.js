@@ -20,8 +20,22 @@ function main() {
     var supply = parseInt(prompt("How many images do you want to generate ?", "10"));
     var name = prompt("What is the name of your collection ?", "NFT-Collection");
     var description = prompt("What is the description for your collection ?", "NFT-Description");
+    var needDiffStart = confirm("Do you want a different start ID ? Useful when you want to add new NFT to an existing collection.");
+    var startId = 0;
 
-    if (isNaN(supply)) {
+    if (needDiffStart) {
+        startId = parseInt(prompt("Please set the start ID. (The last id of your collection generated)", "1"));
+
+        if (startId === null || isNaN(startId)) {
+            alert("You need to enter a valid start ID number.");
+            return;
+        }
+        if (startId < 2) {
+            startId = 0;
+        }
+    }
+
+    if (supply === null || isNaN(supply)) {
         alert("You need to enter a valid number of images you want to generate.");
         return;
     }
@@ -74,7 +88,8 @@ function main() {
     Main program loop
     Used to generate the NFT collection
     */
-    for (var nftID = 0; nftID < supply; ++nftID) {
+    var limitLoop = supply + startId;
+    for (var nftID = startId; nftID < limitLoop; ++nftID) {
         var nft = {};
 
         nft.name = "toSet";
