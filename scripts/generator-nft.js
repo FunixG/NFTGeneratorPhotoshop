@@ -21,6 +21,19 @@ function main() {
     var name = prompt("What is the name of your collection ?", "NFT-Collection");
     var description = prompt("What is the description for your collection ?", "NFT-Description");
 
+    if (isNaN(supply)) {
+        alert("You need to enter a valid number of images you want to generate.");
+        return;
+    }
+    if (name === null || name.length === 0) {
+        alert("You can't have an empty collection name.");
+        return;
+    }
+    if (description === null || description.length === 0) {
+        alert("You can't have an empty collection description");
+        return;
+    }
+
     var rarityUserCheck = confirm("This script use a rarity (weight) system. You can add # on your layers names to define a rarity. Do you want to continue ?\nPlease see the documentation on github.")
     if (!rarityUserCheck) {
         return;
@@ -31,6 +44,11 @@ function main() {
     var typesInMeta = false;
     if (usingTypes) {
         typesFolderName = prompt("What's the name of the folder in photoshop containing the types ?", "types").toLowerCase();
+        if (typesFolderName === null || typesFolderName.length === 0) {
+            alert("You can't have an empty types folder name. Example -> types");
+            return;
+        }
+
         typesInMeta = confirm("Do you want to have types in the metadata ?");
     }
 
